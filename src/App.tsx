@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BarraJuego } from './components/BarraJuego'
 import { PantallaGanaste } from './components/PantallaGanaste'
 import { PantallaInicio } from './components/PantallaInicio'
 import { Tablero } from './components/Tablero'
-import { MS_AL_FALLAR, niveles } from './data/niveles'
+import { niveles, tiempoFallo, tiempoMemoria } from './data/niveles'
 import { useCronometro } from './hooks/useCronometro'
 import type { Carta, MejorMarca, PantallaApp } from './types/juego'
 import {
@@ -26,12 +26,15 @@ function App() {
   const [abiertas, setAbiertas] = useState<string[]>([])
   const [movimientos, setMovimientos] = useState(0)
   const [bloqueado, setBloqueado] = useState(false)
+  const [memorizando, setMemorizando] = useState(false)
   const [idsConError, setIdsConError] = useState<string[]>([])
   const [mejorAnterior, setMejorAnterior] = useState<MejorMarca | null>(null)
   const [fueNuevoRecord, setFueNuevoRecord] = useState(false)
 
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const nivelActual = niveles[indiceNivel]
-  const cronometroActivo = pantalla === 'juego'
+  const cronometroActivo = pantalla === 'juego' && !memorizando
   const { segundos, reiniciar: reiniciarCronometro } = useCronometro(cronometroActivo)
   const paresEncontrados = contarParesEncontrados(cartas)
 
@@ -42,16 +45,39 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
   function prepararPartida(indice: number) {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+
     setIndiceNivel(indice)
-    setCartas(armarTablero(niveles[indice].parejas))
+    const tablero = armarTablero(niveles[indice].parejas)
+
+    setCartas(tablero.map((c) => ({ ...c, volteada: true })))
     setAbiertas([])
     setMovimientos(0)
-    setBloqueado(false)
     setIdsConError([])
     setFueNuevoRecord(false)
+    setBloqueado(true)
+    setMemorizando(true)
     reiniciarCronometro()
     guardarNivelElegido(indice)
+
+    timeoutRef.current = setTimeout(() => {
+      setCartas(tablero.map((c) => ({ ...c, volteada: false })))
+      setBloqueado(false)
+      setMemorizando(false)
+      timeoutRef.current = null
+    }, tiempoMemoria)
   }
 
   function iniciarJuego() {
@@ -64,6 +90,11 @@ function App() {
   }
 
   function irAInicio() {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    setMemorizando(false)
     setPantalla('inicio')
   }
 
@@ -77,7 +108,7 @@ function App() {
   }
 
   function alClickCarta(id: string) {
-    if (pantalla !== 'juego' || bloqueado) return
+    if (pantalla !== 'juego' || bloqueado || memorizando) return
 
     const carta = cartas.find((c) => c.id === id)
     if (!carta || carta.encontrada || carta.volteada) return
@@ -130,7 +161,7 @@ function App() {
         )
         setIdsConError([])
         setBloqueado(false)
-      }, MS_AL_FALLAR)
+      }, tiempoFallo)
     }
   }
 
@@ -154,13 +185,14 @@ function App() {
             movimientos={movimientos}
             segundos={segundos}
             paresEncontrados={paresEncontrados}
+            memorizando={memorizando}
             alReiniciar={reiniciarPartida}
             alCambiarNivel={irAInicio}
           />
           <Tablero
             cartas={cartas}
             columnas={nivelActual.columnas}
-            bloqueado={bloqueado}
+            bloqueado={bloqueado || memorizando}
             idsConError={idsConError}
             alClickCarta={alClickCarta}
           />
