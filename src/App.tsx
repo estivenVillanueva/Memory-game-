@@ -17,11 +17,14 @@ import {
   leerMejorMarca,
   leerNivelGuardado,
 } from './utils/puntuacionLocal'
-import { sonMismoPar } from './utils/verificarPar'
 
 function App() {
   const [pantalla, setPantalla] = useState<PantallaApp>('inicio')
-  const [indiceNivel, setIndiceNivel] = useState(() => leerNivelGuardado())
+  const [indiceNivel, setIndiceNivel] = useState(() => {
+    const guardado = leerNivelGuardado()
+    if (guardado >= 0 && guardado < niveles.length) return guardado
+    return 0
+  })
   const [cartas, setCartas] = useState<Carta[]>([])
   const [abiertas, setAbiertas] = useState<string[]>([])
   const [movimientos, setMovimientos] = useState(0)
@@ -37,13 +40,6 @@ function App() {
   const cronometroActivo = pantalla === 'juego' && !memorizando
   const { segundos, reiniciar: reiniciarCronometro } = useCronometro(cronometroActivo)
   const paresEncontrados = contarParesEncontrados(cartas)
-
-  useEffect(() => {
-    const guardado = leerNivelGuardado()
-    if (guardado >= 0 && guardado < niveles.length) {
-      setIndiceNivel(guardado)
-    }
-  }, [])
 
   useEffect(() => {
     return () => {
@@ -133,7 +129,7 @@ function App() {
     const carta2 = nuevasCartas.find((c) => c.id === idsAbiertos[1])
     if (!carta1 || !carta2) return
 
-    if (sonMismoPar(carta1, carta2)) {
+    if (carta1.grupo === carta2.grupo) {
       const conPar = nuevasCartas.map((c) => {
         if (c.grupo === carta1.grupo) {
           return { ...c, encontrada: true, volteada: true }

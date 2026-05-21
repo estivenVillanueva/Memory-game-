@@ -20,5 +20,3 @@ export type MejorMarca = {
 }
 
 export type PantallaApp = 'inicio' | 'juego' | 'victoria'
-
-export type EstadoPartida = 'jugando' | 'ganaste'
