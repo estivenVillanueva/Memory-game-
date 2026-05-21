@@ -6,4 +6,6 @@ export const niveles: Nivel[] = [
   { id: 3, nombre: 'Difícil', parejas: 18, columnas: 6, filas: 6 },
 ]
 
-export const MS_AL_FALLAR = 1000
+// milisegundos (para setTimeout)
+export const tiempoFallo = 1000
+export const tiempoMemoria = 1000

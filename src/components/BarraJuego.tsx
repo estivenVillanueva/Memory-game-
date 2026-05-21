@@ -6,6 +6,7 @@ type Props = {
   movimientos: number
   segundos: number
   paresEncontrados: number
+  memorizando: boolean
   alReiniciar: () => void
   alCambiarNivel: () => void
 }
@@ -15,6 +16,7 @@ export function BarraJuego({
   movimientos,
   segundos,
   paresEncontrados,
+  memorizando,
   alReiniciar,
   alCambiarNivel,
 }: Props) {
@@ -23,7 +25,9 @@ export function BarraJuego({
       <div className="barra-titulo">
         <h1>{nivel.nombre}</h1>
         <p>
-          Tablero {nivel.columnas}×{nivel.filas}
+          {memorizando
+            ? 'Memoriza las cartas...'
+            : `Tablero ${nivel.columnas}×${nivel.filas}`}
         </p>
       </div>
 
