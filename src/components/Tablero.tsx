@@ -18,7 +18,7 @@ export function Tablero({
 }: Props) {
   return (
     <div
-      className="tablero"
+      className={`tablero tablero-${columnas}cols`}
       style={{ gridTemplateColumns: `repeat(${columnas}, 1fr)` }}
     >
       {cartas.map((carta) => (
