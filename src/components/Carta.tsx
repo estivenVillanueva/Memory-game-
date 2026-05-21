@@ -9,6 +9,7 @@ type Props = {
 
 export function Carta({ carta, bloqueado, tieneError, alClick }: Props) {
   const seVe = carta.volteada || carta.encontrada
+  const colorGrupo = carta.grupo % 8
 
   let clases = 'carta'
   if (seVe) clases += ' carta-volteada'
@@ -19,10 +20,11 @@ export function Carta({ carta, bloqueado, tieneError, alClick }: Props) {
     <button
       type="button"
       className={clases}
+      data-color={colorGrupo}
       disabled={bloqueado || carta.encontrada || carta.volteada}
       onClick={() => alClick(carta.id)}
     >
-      <span className="carta-dorso">?</span>
+      <span className="carta-dorso" aria-hidden="true" />
       <span className="carta-frente">{carta.valor}</span>
     </button>
   )

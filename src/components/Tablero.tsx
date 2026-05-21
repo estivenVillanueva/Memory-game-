@@ -17,19 +17,21 @@ export function Tablero({
   alClickCarta,
 }: Props) {
   return (
-    <div
-      className={`tablero tablero-${columnas}cols`}
-      style={{ gridTemplateColumns: `repeat(${columnas}, 1fr)` }}
-    >
-      {cartas.map((carta) => (
-        <Carta
-          key={carta.id}
-          carta={carta}
-          bloqueado={bloqueado}
-          tieneError={idsConError.includes(carta.id)}
-          alClick={alClickCarta}
-        />
-      ))}
+    <div className="mesa">
+      <div
+        className={`tablero tablero-${columnas}cols`}
+        style={{ gridTemplateColumns: `repeat(${columnas}, 1fr)` }}
+      >
+        {cartas.map((carta) => (
+          <Carta
+            key={carta.id}
+            carta={carta}
+            bloqueado={bloqueado}
+            tieneError={idsConError.includes(carta.id)}
+            alClick={alClickCarta}
+          />
+        ))}
+      </div>
     </div>
   )
 }

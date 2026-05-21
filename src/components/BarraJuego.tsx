@@ -20,35 +20,35 @@ export function BarraJuego({
 }: Props) {
   return (
     <header className="barra">
-      <div>
+      <div className="barra-titulo">
         <h1>{nivel.nombre}</h1>
         <p>
-          {nivel.columnas}×{nivel.filas}
+          Tablero {nivel.columnas}×{nivel.filas}
         </p>
       </div>
 
-      <ul className="stats">
-        <li>
-          <span>Movimientos</span>
+      <div className="hud">
+        <div className="hud-item">
+          <span className="hud-etiqueta">Tiempo</span>
+          <strong className="hud-tiempo">{formatearTiempo(segundos)}</strong>
+        </div>
+        <div className="hud-item">
+          <span className="hud-etiqueta">Movimientos</span>
           <strong>{movimientos}</strong>
-        </li>
-        <li>
-          <span>Tiempo</span>
-          <strong>{formatearTiempo(segundos)}</strong>
-        </li>
-        <li>
-          <span>Pares</span>
+        </div>
+        <div className="hud-item">
+          <span className="hud-etiqueta">Pares</span>
           <strong>
             {paresEncontrados}/{nivel.parejas}
           </strong>
-        </li>
-      </ul>
+        </div>
+      </div>
 
       <div className="barra-botones">
-        <button type="button" onClick={alReiniciar}>
+        <button type="button" className="boton-secundario" onClick={alReiniciar}>
           Reiniciar
         </button>
-        <button type="button" onClick={alCambiarNivel}>
+        <button type="button" className="boton-secundario" onClick={alCambiarNivel}>
           Cambiar nivel
         </button>
       </div>

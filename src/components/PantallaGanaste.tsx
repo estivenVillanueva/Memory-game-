@@ -50,7 +50,7 @@ export function PantallaGanaste({
         <button type="button" className="boton-principal" onClick={alJugarDeNuevo}>
           Jugar de nuevo
         </button>
-        <button type="button" onClick={alInicio}>
+        <button type="button" className="boton-secundario" onClick={alInicio}>
           Volver al inicio
         </button>
       </div>
